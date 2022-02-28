@@ -9,7 +9,6 @@ const bcrypt = require('bcrypt');
 /**
  * Get authenticated user's profile
  *
- * GET /
  */
 const getProfile = async (req, res) => {
 	res.send({
@@ -23,7 +22,6 @@ const getProfile = async (req, res) => {
 /**
  * Update authenticated user's profile
  *
- * PUT /
  */
 const updateProfile = async (req, res) => {
 	const errors = validationResult(req);
@@ -68,7 +66,6 @@ const updateProfile = async (req, res) => {
 /**
  * Get authenticated user's photos
  *
- * GET /photos
  */
 const getPhotos = async (req, res) => {
 	await req.user.load('photos');
@@ -78,6 +75,11 @@ const getPhotos = async (req, res) => {
 		data: { photos: req.user.related('photos') },
 	});
 };
+
+/**
+ * Add authenticated user's photo
+ *
+ */
 
 const addPhoto = async (req, res) => {
 	// check for any validation errors
@@ -122,6 +124,25 @@ const addPhoto = async (req, res) => {
 		throw error;
 	}
 };
+
+/**
+ * Get authenticated user's albums
+ *
+ */
+
+const getAlbums = async (req, res) => {
+	await req.user.load('albums');
+
+	res.status(200).send({
+		status: 'success',
+		data: { albums: req.user.related('albums') },
+	});
+};
+
+/**
+ * Add authenticated user's album
+ *
+ */
 
 const addAlbum = async (req, res) => {
 	// check for any validation errors
@@ -172,5 +193,6 @@ module.exports = {
 	updateProfile,
 	getPhotos,
 	addPhoto,
+	getAlbums,
 	addAlbum,
 };
