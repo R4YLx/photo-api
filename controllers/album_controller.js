@@ -11,7 +11,7 @@ const models = require('../models');
  *
  * GET /
  */
-const index = async (req, res) => {
+const getAlbums = async (req, res) => {
 	const all_albums = await models.album_model.fetchAll();
 
 	res.send({
@@ -25,7 +25,7 @@ const index = async (req, res) => {
  *
  * GET /:albumId
  */
-const show = async (req, res) => {
+const getAlbum = async (req, res) => {
 	const album = await new models.album_model({
 		id: req.params.albumId,
 	}).fetch({ withRelated: ['photos', 'users'] });
@@ -41,7 +41,7 @@ const show = async (req, res) => {
  *
  * POST /
  */
-const store = async (req, res) => {
+const addAlbum = async (req, res) => {
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -73,7 +73,7 @@ const store = async (req, res) => {
  *
  * PUT /:albumId
  */
-const update = async (req, res) => {
+const updateAlbum = async (req, res) => {
 	const albumId = req.params.albumId;
 
 	// make sure album exists
@@ -120,7 +120,7 @@ const update = async (req, res) => {
  *
  * DELETE /:albumId
  */
-const destroy = (req, res) => {
+const deleteAlbum = (req, res) => {
 	res.status(400).send({
 		status: 'fail',
 		message: 'Method Not Allowed.',
@@ -128,9 +128,9 @@ const destroy = (req, res) => {
 };
 
 module.exports = {
-	index,
-	show,
-	store,
-	update,
-	destroy,
+	getAlbums,
+	getAlbum,
+	addAlbum,
+	updateAlbum,
+	deleteAlbum,
 };

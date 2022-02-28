@@ -11,7 +11,7 @@ const models = require('../models');
  *
  * GET /
  */
-const index = async (req, res) => {
+const getPhotos = async (req, res) => {
 	const all_photos = await models.photo_model.fetchAll();
 
 	res.send({
@@ -25,7 +25,7 @@ const index = async (req, res) => {
  *
  * GET /:photoId
  */
-const show = async (req, res) => {
+const getPhoto = async (req, res) => {
 	const photo = await new models.photo_model({
 		id: req.params.photoId,
 	}).fetch({ withRelated: ['photos', 'albums'] });
@@ -41,7 +41,7 @@ const show = async (req, res) => {
  *
  * POST /
  */
-const store = async (req, res) => {
+const addPhoto = async (req, res) => {
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -73,7 +73,7 @@ const store = async (req, res) => {
  *
  * PUT /:photoId
  */
-const update = async (req, res) => {
+const updatePhoto = async (req, res) => {
 	const photoId = req.params.photoId;
 
 	// make sure photo exists
@@ -120,7 +120,7 @@ const update = async (req, res) => {
  *
  * DELETE /:albumId
  */
-const destroy = (req, res) => {
+const deletePhoto = (req, res) => {
 	res.status(400).send({
 		status: 'fail',
 		message: 'Method Not Allowed.',
@@ -128,9 +128,9 @@ const destroy = (req, res) => {
 };
 
 module.exports = {
-	index,
-	show,
-	store,
-	update,
-	destroy,
+	getPhotos,
+	getPhoto,
+	addPhoto,
+	updatePhoto,
+	deletePhoto,
 };
