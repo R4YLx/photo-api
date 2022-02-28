@@ -1,8 +1,8 @@
 /**
- * User Controller
+ * Album Controller
  */
 
-const debug = require('debug')('photos:user_controller');
+const debug = require('debug')('photos:album_controller');
 const { matchedData, validationResult } = require('express-validator');
 const models = require('../models');
 
@@ -12,27 +12,27 @@ const models = require('../models');
  * GET /
  */
 const index = async (req, res) => {
-	const all_users = await models.user_model.fetchAll();
+	const all_albums = await models.album_model.fetchAll();
 
 	res.send({
 		status: 'success',
-		data: all_users,
+		data: all_albums,
 	});
 };
 
 /**
  * Get a specific resource
  *
- * GET /:userId
+ * GET /:albumId
  */
 const show = async (req, res) => {
-	const user = await new models.user_model({
-		id: req.params.userId,
-	}).fetch({ withRelated: ['photos', 'albums'] });
+	const album = await new models.album_model({
+		id: req.params.albumId,
+	}).fetch({ withRelated: ['photos', 'users'] });
 
 	res.send({
 		status: 'success',
-		data: user,
+		data: album,
 	});
 };
 
@@ -52,17 +52,17 @@ const store = async (req, res) => {
 	const validData = matchedData(req);
 
 	try {
-		const user = await new models.user_model(validData).save();
-		debug('Created new user successfully: %O', user);
+		const album = await new models.album_model(validData).save();
+		debug('Created new album successfully: %O', album);
 
 		res.send({
 			status: 'success',
-			data: user,
+			data: album,
 		});
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when creating a new user.',
+			message: 'Exception thrown in database when creating a new album.',
 		});
 		throw error;
 	}
@@ -71,20 +71,20 @@ const store = async (req, res) => {
 /**
  * Update a specific resource
  *
- * PUT /:userId
+ * PUT /:albumId
  */
 const update = async (req, res) => {
-	const userId = req.params.userId;
+	const albumId = req.params.albumId;
 
-	// make sure user exists
-	const user = await new models.user_model({ id: userId }).fetch({
+	// make sure album exists
+	const album = await new models.album_model({ id: albumId }).fetch({
 		require: false,
 	});
-	if (!user) {
-		debug('User to update was not found. %o', { id: userId });
+	if (!album) {
+		debug('Album to update was not found. %o', { id: albumId });
 		res.status(404).send({
 			status: 'fail',
-			data: 'User Not Found',
+			data: 'Album Not Found',
 		});
 		return;
 	}
@@ -99,17 +99,17 @@ const update = async (req, res) => {
 	const validData = matchedData(req);
 
 	try {
-		const updatedUser = await user.save(validData);
-		debug('Updated user successfully: %O', updatedUser);
+		const updatedAlbum = await album.save(validData);
+		debug('Updated album successfully: %O', updatedAlbum);
 
 		res.send({
 			status: 'success',
-			data: updatedUser,
+			data: updatedAlbum,
 		});
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when updating a new user.',
+			message: 'Exception thrown in database when updating a new album.',
 		});
 		throw error;
 	}
@@ -118,7 +118,7 @@ const update = async (req, res) => {
 /**
  * Destroy a specific resource
  *
- * DELETE /:userId
+ * DELETE /:albumId
  */
 const destroy = (req, res) => {
 	res.status(400).send({
