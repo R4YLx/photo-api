@@ -15,7 +15,9 @@ const knex = require('knex')({
 const bookshelf = require('bookshelf')(knex);
 
 const models = {};
-models.Example = require('./Example')(bookshelf);
+models.user = require('./user_model')(bookshelf);
+models.photo = require('./photo_model')(bookshelf);
+models.album = require('./album_model')(bookshelf);
 
 module.exports = {
 	bookshelf,
