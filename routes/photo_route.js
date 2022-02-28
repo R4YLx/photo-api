@@ -3,29 +3,23 @@ const router = express.Router();
 const photoController = require('../controllers/photo_controller');
 const photoValidationRules = require('../validation/photo_validation');
 
-/**
- * Get authenticated user's all photos
- */
+/* Get all resources */
 router.get('/', photoController.getPhotos);
 
-/**
- * Update authenticated user's photo
- */
-router.put('/', photoValidationRules.updateRules, photoController.updatePhoto);
+/* Get a specific resource */
+router.get('/:photoId', photoController.getPhoto);
 
-/**
- * Get authenticated user's specific photo
- */
-router.get('/photos', photoController.getPhoto);
+/* Store a new resource */
+router.post('/', photoValidationRules.createRules, photoController.addPhoto);
 
-/**
- * Add a photo to the authenticated user
- *
- */
-router.post(
-	'/photos',
-	photoValidationRules.addPhotoRules,
-	photoController.addPhoto
+/* Update a specific resource */
+router.put(
+	'/:photoId',
+	photoValidationRules.updateRules,
+	photoController.updatePhoto
 );
+
+/* Destroy a specific resource */
+router.delete('/:photoId', photoController.deletePhoto);
 
 module.exports = router;
