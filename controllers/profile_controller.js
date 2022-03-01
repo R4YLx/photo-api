@@ -11,12 +11,20 @@ const bcrypt = require('bcrypt');
  *
  */
 const getProfile = async (req, res) => {
-	res.send({
-		status: 'success',
-		data: {
-			user: req.user,
-		},
-	});
+	try {
+		res.send({
+			status: 'success',
+			data: {
+				user: req.user,
+			},
+		});
+	} catch {
+		res.status(500).send({
+			status: 'error',
+			message: 'Could not GET profile',
+		});
+		throw error;
+	}
 };
 
 /**
