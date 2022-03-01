@@ -5,7 +5,7 @@
 const debug = require('debug')('books:auth');
 const bcrypt = require('bcrypt');
 
-const { User } = require('../models');
+const { User, user_model } = require('../models');
 
 /**
  * HTTP Basic Authentication
@@ -44,14 +44,14 @@ const basic = async (req, res, next) => {
 
 	// decode payload from base64 => ascii
 	const decodedPayload = Buffer.from(base64Payload, 'base64').toString('ascii');
-	// decodedPayload = "username:password"
+	// decodedPayload = "email:password"
 
-	// split decoded payload into "<username>:<password>"
-	const [username, password] = decodedPayload.split(':');
-	console.log(username, password);
+	// split decoded payload into "<email>:<password>"
+	const [email, password] = decodedPayload.split(':');
+	console.log(email, password);
 
-	// check if a user with this username and password exists
-	const user = await new User({ username }).fetch({ require: false });
+	// check if a user with this email and password exists
+	const user = await new user_model({ email }).fetch({ require: false });
 	if (!user) {
 		return res.status(401).send({
 			status: 'fail',
