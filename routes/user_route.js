@@ -4,18 +4,22 @@ const userController = require('../controllers/user_controller');
 const userValidationRules = require('../validation/user_validation');
 
 /* Get all resources */
-router.get('/', userController.index);
+router.get('/', userController.getUsers);
 
 /* Get a specific resource */
-router.get('/:userId', userController.show);
+router.get('/:userId', userController.getUser);
 
 /* Store a new resource */
-router.post('/', userValidationRules.createRules, userController.store);
+router.post('/', userValidationRules.createRules, userController.addUser);
 
 /* Update a specific resource */
-router.put('/:userId', userValidationRules.updateRules, userController.update);
+router.put(
+	'/:userId',
+	userValidationRules.updateRules,
+	userController.updateUser
+);
 
 /* Destroy a specific resource */
-router.delete('/:userId', userController.destroy);
+router.delete('/:userId', userController.deleteUser);
 
 module.exports = router;

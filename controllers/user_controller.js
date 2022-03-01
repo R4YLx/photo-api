@@ -11,13 +11,21 @@ const models = require('../models');
  *
  * GET /
  */
-const index = async (req, res) => {
-	const all_users = await models.user_model.fetchAll();
+const getUsers = async (req, res) => {
+	try {
+		const all_users = await models.user_model.fetchAll();
 
-	res.send({
-		status: 'success',
-		data: all_users,
-	});
+		res.send({
+			status: 'success',
+			data: all_users,
+		});
+	} catch {
+		res.status(500).send({
+			status: 'error',
+			message: 'Could not GET users',
+		});
+		throw error;
+	}
 };
 
 /**
@@ -25,7 +33,7 @@ const index = async (req, res) => {
  *
  * GET /:userId
  */
-const show = async (req, res) => {
+const getUser = async (req, res) => {
 	const user = await new models.user_model({
 		id: req.params.userId,
 	}).fetch({ withRelated: ['photos', 'albums'] });
@@ -41,7 +49,7 @@ const show = async (req, res) => {
  *
  * POST /
  */
-const store = async (req, res) => {
+const addUser = async (req, res) => {
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -73,7 +81,7 @@ const store = async (req, res) => {
  *
  * PUT /:userId
  */
-const update = async (req, res) => {
+const updateUser = async (req, res) => {
 	const userId = req.params.userId;
 
 	// make sure user exists
@@ -120,7 +128,7 @@ const update = async (req, res) => {
  *
  * DELETE /:userId
  */
-const destroy = (req, res) => {
+const deleteUser = (req, res) => {
 	res.status(400).send({
 		status: 'fail',
 		message: 'Method Not Allowed.',
@@ -128,9 +136,9 @@ const destroy = (req, res) => {
 };
 
 module.exports = {
-	index,
-	show,
-	store,
-	update,
-	destroy,
+	getUsers,
+	getUser,
+	addUser,
+	updateUser,
+	deleteUser,
 };

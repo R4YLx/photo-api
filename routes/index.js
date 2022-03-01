@@ -6,7 +6,7 @@ const userValidationRules = require('../validation/user_validation');
 
 /* GET / */
 router.get('/', (req, res, next) => {
-	res.send({ success: true, data: { msg: 'oh, hi' } });
+	res.send({ success: true, data: { msg: 'Hi there!' } });
 });
 
 router.use('/photos', require('./photo_route'));
