@@ -28,7 +28,7 @@ const getAlbums = async (req, res) => {
 const getAlbum = async (req, res) => {
 	const album = await new models.album_model({
 		id: req.params.albumId,
-	}).fetch({ withRelated: ['photos', 'users'] });
+	}).fetch({ withRelated: ['users'] });
 
 	res.send({
 		status: 'success',
