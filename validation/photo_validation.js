@@ -13,10 +13,10 @@ const createRules = [
 		.exists()
 		.bail()
 		.custom(async value => {
-			const author = await new models.user_model({ id: value }).fetch({
+			const user = await new models.user_model({ id: value }).fetch({
 				require: false,
 			});
-			if (!author) {
+			if (!user) {
 				return Promise.reject(`User with ID ${value} does not exist.`);
 			}
 
@@ -33,10 +33,10 @@ const updateRules = [
 		.exists()
 		.bail()
 		.custom(async value => {
-			const author = await new models.user_model({ id: value }).fetch({
+			const user = await new models.user_model({ id: value }).fetch({
 				require: false,
 			});
-			if (!author) {
+			if (!user) {
 				return Promise.reject(`User with ID ${value} does not exist.`);
 			}
 

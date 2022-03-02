@@ -5,7 +5,7 @@
 const debug = require('debug')('books:auth');
 const bcrypt = require('bcrypt');
 
-const { User, user_model } = require('../models');
+const { user_model } = require('../models');
 
 /**
  * HTTP Basic Authentication
