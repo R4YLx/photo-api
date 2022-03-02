@@ -24,7 +24,6 @@ const createRules = [
 		}),
 ];
 
-// Tillåt endast lösen, för- och efternamn uppdateras.
 const updateRules = [
 	body('title').optional().isLength({ min: 4 }),
 	body('url').optional().isLength({ min: 4 }),
