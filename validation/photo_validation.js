@@ -8,7 +8,7 @@ const models = require('../models');
 const createRules = [
 	body('title').exists().isLength({ min: 4 }),
 	body('url').exists().isLength({ min: 4 }),
-	body('comment').optional().isInt({ min: 1 }),
+	body('comment').optional().isLength({ min: 1 }),
 	body('user_id')
 		.exists()
 		.bail()
