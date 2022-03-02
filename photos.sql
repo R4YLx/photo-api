@@ -26,6 +26,7 @@ CREATE TABLE albums (
 );
 
 CREATE TABLE photos_albums (
+    id INT NOT NULL AUTO_INCREMENT,
     photo_id INTEGER NOT NULL REFERENCES photos(id),
     album_id INTEGER NOT NULL REFERENCES albums(id)
 )
