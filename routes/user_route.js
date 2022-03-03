@@ -8,7 +8,7 @@ const userValidationRules = require('../validation/user_validation');
 ///////*/
 
 /* Get authenticated user's profile */
-router.get('/:userId', userController.getUser);
+router.get('/', userController.getUser);
 
 /* Get authenticated user's photos */
 router.get('/photos', userController.getPhotos);
@@ -39,17 +39,13 @@ router.post(
 ///////*/
 
 /* Update authenticated user's profile */
-router.put(
-	'/:userId',
-	userValidationRules.updateRules,
-	userController.updateUser
-);
+router.put('/', userValidationRules.updateRules, userController.updateUser);
 
 /*/////////////
 //	DESTROY	//
 ///////////*/
 
 /* Delete user */
-router.delete('/:userId', userController.deleteUser);
+router.delete('/', userController.deleteUser);
 
 module.exports = router;

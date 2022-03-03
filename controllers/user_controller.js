@@ -7,6 +7,7 @@
 const debug = require('debug')('photos:user_controller');
 const { matchedData, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
+const { user_model } = require('../models');
 
 /**
  * Get authenticated user profile
@@ -14,18 +15,15 @@ const bcrypt = require('bcrypt');
 
 const getUser = async (req, res) => {
 	try {
+		const user = await user_model.fetchById(req.user.user_id);
 		res.send({
 			status: 'success',
 			data: {
-				user: user,
+				user,
 			},
 		});
-	} catch {
-		res.status(500).send({
-			status: 'error',
-			message: 'Could not GET user',
-		});
-		throw error;
+	} catch (error) {
+		return res.sendStatus(404);
 	}
 };
 
@@ -33,12 +31,13 @@ const getUser = async (req, res) => {
  * Update authenticated user profile
  */
 const updateUser = async (req, res) => {
+	const user = await User.fetchById(req.user.user_id);
+
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).send({ status: 'fail', data: errors.array() });
 	}
 
-	// get only the validated data from the request
 	const validData = matchedData(req);
 
 	if (validData.password) {
@@ -54,7 +53,7 @@ const updateUser = async (req, res) => {
 	}
 
 	try {
-		const updatedUser = await req.user.save(validData);
+		const updatedUser = await user.save(validData);
 		debug('Updated user successfully: %O', updatedUser);
 
 		res.send({
@@ -76,11 +75,13 @@ const updateUser = async (req, res) => {
  * Get authenticated user's photos
  */
 const getPhotos = async (req, res) => {
-	await req.user.load('photos');
+	const user = await user_model.fetchById(req.user.user_id, {
+		withRelated: ['photos'],
+	});
 
 	res.status(200).send({
 		status: 'success',
-		data: { photos: req.user.related('photos') },
+		data: { photos: user.related('photos') },
 	});
 };
 
@@ -89,6 +90,9 @@ const getPhotos = async (req, res) => {
  */
 
 const addPhoto = async (req, res) => {
+	const user = await user_model.fetchById(req.user.user_id, {
+		withRelated: ['photos'],
+	});
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -98,11 +102,8 @@ const addPhoto = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
-	// lazy-load photo relationship
-	await req.user.load('photos');
-
 	// get the user's photos
-	const photos = req.user.related('photos');
+	const photos = user.related('photos');
 
 	// check if photo is already in the user's list of photos
 	const existing_photo = photos.find(photo => photo.id == validData.photo_id);
@@ -116,7 +117,7 @@ const addPhoto = async (req, res) => {
 	}
 
 	try {
-		const result = await req.user.photos().attach(validData.photo_id);
+		const result = await user.photos().attach(validData.photo_id);
 		debug('Added photo to user successfully: %O', result);
 
 		res.send({
@@ -137,11 +138,13 @@ const addPhoto = async (req, res) => {
  */
 
 const getAlbums = async (req, res) => {
-	await req.user.load('albums');
+	const user = await user_model.fetchById(req.user.user_id, {
+		withRelated: ['albums'],
+	});
 
 	res.status(200).send({
 		status: 'success',
-		data: { albums: req.user.related('albums') },
+		data: { photos: user.related('albums') },
 	});
 };
 
@@ -150,6 +153,9 @@ const getAlbums = async (req, res) => {
  */
 
 const addAlbum = async (req, res) => {
+	const user = await user_model.fetchById(req.user.user_id, {
+		withRelated: ['albums'],
+	});
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -159,11 +165,8 @@ const addAlbum = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
-	// lazy-load album relationship
-	await req.user.load('albums');
-
 	// get the user's albums
-	const albums = req.user.related('albums');
+	const albums = user.related('albums');
 
 	// check if album is already in the user's list of albums
 	const existing_album = albums.find(album => album.id == validData.album_id);
@@ -177,7 +180,7 @@ const addAlbum = async (req, res) => {
 	}
 
 	try {
-		const result = await req.user.albums().attach(validData.album_id);
+		const result = await user.albums().attach(validData.album_id);
 		debug('Added album to user successfully: %O', result);
 
 		res.send({
