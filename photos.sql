@@ -27,6 +27,11 @@ CREATE TABLE albums (
 
 CREATE TABLE photos_albums (
     id INT NOT NULL AUTO_INCREMENT,
-    photo_id INTEGER NOT NULL REFERENCES photos(id),
-    album_id INTEGER NOT NULL REFERENCES albums(id)
+    photo_id INT NOT NULL,
+    album_id INT NOT NULL,
+    PRIMARY KEY (id)
 )
+
+ALTER TABLE photos_albums
+ADD CONSTRAINT FOREIGN KEY (`photo_id`) REFERENCES `users` (`id`),
+ADD CONSTRAINT FOREIGN KEY (`album_id`) REFERENCES `users` (`id`)
