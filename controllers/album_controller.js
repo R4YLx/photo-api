@@ -62,21 +62,22 @@ const addAlbum = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
-	// get the user's albums
 	const user = await models.User.fetchById(req.user.user_id, {
 		withRelated: ['albums'],
 	});
 
-	// check if album is already in the user's list of albums
-	const existing_album = albums.find(album => album.id == validData.album_id);
+	// const albums = user.related('albums');
 
-	// if it already exists, bail
-	if (existing_album) {
-		return res.send({
-			status: 'fail',
-			data: 'Album already exists.',
-		});
-	}
+	// // check if album is already in the user's list of albums
+	// const existing_album = albums.find(album => album.id == validData.album_id);
+
+	// // if it already exists, bail
+	// if (existing_album) {
+	// 	return res.send({
+	// 		status: 'fail',
+	// 		data: 'Album already exists.',
+	// 	});
+	// }
 
 	try {
 		const result = await user.albums().attach(validData.album_id);
@@ -84,7 +85,7 @@ const addAlbum = async (req, res) => {
 
 		res.send({
 			status: 'success',
-			data: null,
+			data: result,
 		});
 	} catch (error) {
 		res.status(500).send({
