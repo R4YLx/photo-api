@@ -9,12 +9,9 @@ router.get('/', (req, res, next) => {
 	res.send({ success: true, data: { msg: 'Hi there!' } });
 });
 
+router.use('/users', auth.basic, require('./user_route'));
 router.use('/photos', require('./photo_route'));
 router.use('/albums', require('./album_route'));
-router.use('/profile', auth.basic, require('./profile_route'));
-
-// Temp. Removing it later
-router.use('/users', require('./user_route'));
 
 router.post(
 	'/register',
