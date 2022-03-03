@@ -206,9 +206,7 @@ const deleteUser = (req, res) => {
 };
 
 module.exports = {
-	getUsers,
 	getUser,
-	addUser,
 	updateUser,
 	getPhotos,
 	addPhoto,

@@ -20,9 +20,6 @@ router.get('/albums', userController.getAlbums);
 //	POST	//
 ///////////*/
 
-/* Create new user */
-router.post('/', userValidationRules.createRules, userController.addUser);
-
 /* Add a photo to the authenticated user */
 router.post(
 	'/photos',
