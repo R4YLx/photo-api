@@ -1,5 +1,5 @@
 /**
- * Register Controller
+ * Authorization Controller
  */
 
 const bcrypt = require('bcrypt');
