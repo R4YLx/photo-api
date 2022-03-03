@@ -3,14 +3,13 @@
  */
 
 const bcrypt = require('bcrypt');
-const debug = require('debug')('photos:register_controller');
+const debug = require('debug')('books:profile_controller');
 const { matchedData, validationResult } = require('express-validator');
 const models = require('../models');
+const jwt = require('jsonwebtoken');
 
 /**
  * Register a new user
- *
- * POST/
  */
 
 const register = async (req, res) => {
@@ -49,6 +48,44 @@ const register = async (req, res) => {
 	}
 };
 
+/**
+ * Login
+ */
+
+const login = async (req, res) => {
+	const { username, password } = req.body;
+	const user = await models.user_model.login(username, password);
+	if (!user) {
+		return res.status(401).send({
+			status: 'fail',
+			data: 'Authorization failed',
+		});
+	}
+
+	const payload = {
+		sub: user.get('email'),
+		user_id: user.get('id'),
+		name: user.get('first_name') + ' ' + user.get('last_name'),
+	};
+
+	const access_token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+		expiresIn: process.env.ACCESS_TOKEN_LIFETIME || '1h',
+	});
+
+	const refresh_token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+		expiresIn: process.env.REFRESH_TOKEN_LIFETIME || '1w',
+	});
+
+	return res.send({
+		status: 'success',
+		data: {
+			access_token,
+			refresh_token,
+		},
+	});
+};
+
 module.exports = {
 	register,
+	login,
 };
