@@ -31,7 +31,7 @@ const getUser = async (req, res) => {
  * Update authenticated user profile
  */
 const updateUser = async (req, res) => {
-	const user = await User.fetchById(req.user.user_id);
+	const user = await user_model.fetchById(req.user.user_id);
 
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
