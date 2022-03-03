@@ -62,7 +62,7 @@ const addPhoto = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
-	const user = await user_model.fetchById(req.user.user_id, {
+	const user = await models.User.fetchById(req.user.user_id, {
 		withRelated: ['photos'],
 	});
 

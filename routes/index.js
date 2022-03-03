@@ -17,6 +17,8 @@ router.post(
 
 router.post('/login', authController.login);
 
+router.use(auth.validateToken);
+
 // router.use('/users', auth.validateToken, require('./user_route'));
 router.use('/photos', require('./photo_route'));
 router.use('/albums', require('./album_route'));
