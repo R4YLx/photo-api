@@ -44,7 +44,7 @@ const showPhoto = async (req, res) => {
 	res.send({
 		status: 'success',
 		data: {
-			album: photo,
+			photo: photo,
 		},
 	});
 };
