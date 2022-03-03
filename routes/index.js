@@ -4,7 +4,6 @@ const auth = require('../middleware/auth');
 const registerController = require('../controllers/register_controller');
 const userValidationRules = require('../validation/user_validation');
 
-/* GET / */
 router.get('/', (req, res, next) => {
 	res.send({ success: true, data: { msg: 'Hi there!' } });
 });
@@ -18,5 +17,9 @@ router.post(
 	userValidationRules.createRules,
 	registerController.register
 );
+
+router.post('/login', registerController.login);
+
+router.post('/refresh', registerController.refresh);
 
 module.exports = router;

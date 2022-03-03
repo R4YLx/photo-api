@@ -3,7 +3,7 @@
  */
 
 const bcrypt = require('bcrypt');
-const debug = require('debug')('books:profile_controller');
+const debug = require('debug')('photos:register_controller');
 const { matchedData, validationResult } = require('express-validator');
 const models = require('../models');
 const jwt = require('jsonwebtoken');
@@ -53,8 +53,8 @@ const register = async (req, res) => {
  */
 
 const login = async (req, res) => {
-	const { username, password } = req.body;
-	const user = await models.user_model.login(username, password);
+	const { email, password } = req.body;
+	const user = await models.user_model.login(email, password);
 	if (!user) {
 		return res.status(401).send({
 			status: 'fail',
@@ -85,7 +85,41 @@ const login = async (req, res) => {
 	});
 };
 
+/**
+ * Refresh
+ */
+
+const refresh = (req, res) => {
+	try {
+		const payload = jwt.verify(
+			req.body.token,
+			process.env.REFRESH_TOKEN_SECRET
+		);
+
+		delete payload.iat;
+		delete payload.exp;
+
+		const access_token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+			expiresIn: process.env.ACCESS_TOKEN_LIFETIME || '1h',
+		});
+
+		return res.send({
+			status: 'success',
+			data: {
+				access_token,
+			},
+		});
+	} catch (error) {
+		return res.status(401).send({
+			status: 'fail',
+			data: 'invalid token',
+		});
+	}
+	r;
+};
+
 module.exports = {
 	register,
 	login,
+	refresh,
 };

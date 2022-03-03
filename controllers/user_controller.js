@@ -17,7 +17,7 @@ const getUser = async (req, res) => {
 		res.send({
 			status: 'success',
 			data: {
-				user: req.user,
+				user: user,
 			},
 		});
 	} catch {
