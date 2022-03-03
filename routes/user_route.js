@@ -3,23 +3,56 @@ const router = express.Router();
 const userController = require('../controllers/user_controller');
 const userValidationRules = require('../validation/user_validation');
 
-/* Get all resources */
-router.get('/', userController.getUsers);
+/*/////////
+//	GET	//
+///////*/
 
-/* Get a specific resource */
+/* Get authenticated user's profile */
 router.get('/:userId', userController.getUser);
 
-/* Store a new resource */
+/* Get authenticated user's photos */
+router.get('/photos', userController.getPhotos);
+
+/* Get authenticated user's albums */
+router.get('/albums', userController.getAlbums);
+
+/*/////////////
+//	POST	//
+///////////*/
+
+/* Create new user */
 router.post('/', userValidationRules.createRules, userController.addUser);
 
-/* Update a specific resource */
+/* Add a photo to the authenticated user */
+router.post(
+	'/photos',
+	userValidationRules.addPhotoRules,
+	userController.addPhoto
+);
+
+/* Add a album to the authenticated user */
+router.post(
+	'/albums',
+	userValidationRules.addAlbumRules,
+	userController.addAlbum
+);
+
+/*/////////
+//	PUT	//
+///////*/
+
+/* Update authenticated user's profile */
 router.put(
 	'/:userId',
 	userValidationRules.updateRules,
 	userController.updateUser
 );
 
-/* Destroy a specific resource */
+/*/////////////
+//	DESTROY	//
+///////////*/
+
+/* Delete user */
 router.delete('/:userId', userController.deleteUser);
 
 module.exports = router;
