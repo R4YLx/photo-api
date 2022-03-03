@@ -3,13 +3,21 @@
  */
 
 module.exports = bookshelf => {
-	return bookshelf.model('photo_model', {
-		tableName: 'photos',
-		users() {
-			return this.belongsTo('user_model');
+	return bookshelf.model(
+		'Photo',
+		{
+			tableName: 'photos',
+			albums() {
+				return this.belongsToMany('Album');
+			},
+			users() {
+				return this.belongsTo('User');
+			},
 		},
-		albums() {
-			return this.hasMany('album_model');
-		},
-	});
+		{
+			async fetchById(id, fetchOptions = {}) {
+				return await new this({ id }).fetch(fetchOptions);
+			},
+		}
+	);
 };

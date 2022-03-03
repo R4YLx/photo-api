@@ -3,7 +3,7 @@
  */
 
 const bcrypt = require('bcrypt');
-const debug = require('debug')('photos:register_controller');
+const debug = require('debug')('photos:auth_controller');
 const { matchedData, validationResult } = require('express-validator');
 const models = require('../models');
 const jwt = require('jsonwebtoken');
@@ -11,7 +11,6 @@ const jwt = require('jsonwebtoken');
 /**
  * Register a new user
  */
-
 const register = async (req, res) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -30,7 +29,7 @@ const register = async (req, res) => {
 	}
 
 	try {
-		const user = await new models.user_model(validData).save();
+		const user = await new models.User(validData).save();
 		debug('Created new user successfully: %O', user);
 
 		res.send({
@@ -54,7 +53,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
 	const { email, password } = req.body;
-	const user = await models.user_model.login(email, password);
+	const user = await models.User.login(email, password);
 	if (!user) {
 		return res.status(401).send({
 			status: 'fail',
@@ -72,54 +71,15 @@ const login = async (req, res) => {
 		expiresIn: process.env.ACCESS_TOKEN_LIFETIME || '1h',
 	});
 
-	const refresh_token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-		expiresIn: process.env.REFRESH_TOKEN_LIFETIME || '1w',
-	});
-
 	return res.send({
 		status: 'success',
 		data: {
 			access_token,
-			refresh_token,
 		},
 	});
-};
-
-/**
- * Refresh
- */
-
-const refresh = (req, res) => {
-	try {
-		const payload = jwt.verify(
-			req.body.token,
-			process.env.REFRESH_TOKEN_SECRET
-		);
-
-		delete payload.iat;
-		delete payload.exp;
-
-		const access_token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-			expiresIn: process.env.ACCESS_TOKEN_LIFETIME || '1h',
-		});
-
-		return res.send({
-			status: 'success',
-			data: {
-				access_token,
-			},
-		});
-	} catch (error) {
-		return res.status(401).send({
-			status: 'fail',
-			data: 'invalid token',
-		});
-	}
-	r;
 };
 
 module.exports = {
 	register,
 	login,
-	refresh,
 };

@@ -5,10 +5,6 @@
 const debug = require('debug')('books:auth');
 const jwt = require('jsonwebtoken');
 
-/**
- * Validate JWT token
- */
-
 const validateToken = (req, res, next) => {
 	if (!req.headers.authorization) {
 		debug('Authorization header missing');

@@ -7,39 +7,50 @@ const { matchedData, validationResult } = require('express-validator');
 const models = require('../models');
 
 /**
- * Get all resources
- *
- * GET /
+ * Get all photos
  */
+
 const getPhotos = async (req, res) => {
-	const all_photos = await models.photo_model.fetchAll();
+	const user = await models.User.fetchById(req.user.user_id, {
+		withRelated: ['photos'],
+	});
 
-	res.send({
+	res.status(200).send({
 		status: 'success',
-		data: all_photos,
+		data: {
+			photo: user.related('photos'),
+		},
 	});
 };
 
 /**
- * Get a specific resource
- *
- * GET /:photoId
+ * Get a specific photo
  */
-const getPhoto = async (req, res) => {
-	const photo = await new models.photo_model({
-		id: req.params.photoId,
-	}).fetch({ withRelated: ['users'] });
+const showPhoto = async (req, res) => {
+	const user = await models.User.fetchById(req.user.user_id, {
+		withRelated: ['photos'],
+	});
+	const photos = user.related('photos');
+
+	const photo = photos.find(photo => photo.id == req.params.photoId);
+
+	if (!photo) {
+		return res.status(404).send({
+			status: 'fail',
+			message: 'Photo not found',
+		});
+	}
 
 	res.send({
 		status: 'success',
-		data: photo,
+		data: {
+			album: photo,
+		},
 	});
 };
 
 /**
- * Store a new resource
- *
- * POST /
+ * Store a new photo
  */
 const addPhoto = async (req, res) => {
 	// check for any validation errors
@@ -51,33 +62,51 @@ const addPhoto = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
-	try {
-		const photo = await new models.photo_model(validData).save();
-		debug('Created new photo successfully: %O', photo);
+	const user = await user_model.fetchById(req.user.user_id, {
+		withRelated: ['photos'],
+	});
 
+	// get the user's photos
+	const photos = user.related('photos');
+
+	// check if photo is already in the user's list of photos
+	const existing_photo = photos.find(photo => photo.id == validData.photo_id);
+
+	// if it already exists, bail
+	if (existing_photo) {
+		return res.send({
+			status: 'fail',
+			data: 'Photo already exists.',
+		});
+	}
+
+	try {
+		const result = await user.photos().attach(validData.photo_id);
+
+		debug('Added photo successfully: %o', res);
 		res.send({
 			status: 'success',
-			data: photo,
+			data: {
+				result: result,
+			},
 		});
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when creating a new photo.',
+			message: 'Exception thrown when attempting to add an album.',
 		});
 		throw error;
 	}
 };
 
 /**
- * Update a specific resource
- *
- * PUT /:photoId
+ * Update a specific photo
  */
 const updatePhoto = async (req, res) => {
 	const photoId = req.params.photoId;
 
 	// make sure photo exists
-	const photo = await new models.photo_model({ id: photoId }).fetch({
+	const photo = await new models.Photo({ id: photoId }).fetch({
 		require: false,
 	});
 	if (!photo) {
@@ -115,22 +144,9 @@ const updatePhoto = async (req, res) => {
 	}
 };
 
-/**
- * Destroy a specific resource
- *
- * DELETE /:albumId
- */
-const deletePhoto = (req, res) => {
-	res.status(400).send({
-		status: 'fail',
-		message: 'Method Not Allowed.',
-	});
-};
-
 module.exports = {
 	getPhotos,
-	getPhoto,
+	showPhoto,
 	addPhoto,
 	updatePhoto,
-	deletePhoto,
 };
