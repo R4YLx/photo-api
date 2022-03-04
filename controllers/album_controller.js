@@ -53,6 +53,27 @@ const showAlbum = async (req, res) => {
  * Store a new album
  */
 const addAlbum = async (req, res) => {
+	/*
+
+	// add the current user's id to the album
+	validData.user_id = req.user.user_id;
+	try {
+		const album = await new models.Album(validData).save();
+		debug('Created new album successfully: %O', album);
+
+		res.send({
+			status: 'success',
+			data: album,
+		});
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exception thrown in database when creating a new album.',
+		});
+		throw error;
+	}
+	*/
+
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -62,35 +83,20 @@ const addAlbum = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
-	const user = await models.User.fetchById(req.user.user_id, {
-		withRelated: ['albums'],
-	});
-
-	// const albums = user.related('albums');
-
-	// // check if album is already in the user's list of albums
-	// const existing_album = albums.find(album => album.id == validData.album_id);
-
-	// // if it already exists, bail
-	// if (existing_album) {
-	// 	return res.send({
-	// 		status: 'fail',
-	// 		data: 'Album already exists.',
-	// 	});
-	// }
+	validData.user_id = req.user.user_id;
 
 	try {
-		const result = await user.albums().attach(validData.album_id);
-		debug('Added album to user successfully: %O', result);
+		const album = await new models.Album(validData).save();
+		debug('Created new album successfully: %O', album);
 
 		res.send({
 			status: 'success',
-			data: result,
+			data: album,
 		});
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when adding a album to a user.',
+			message: 'Exception thrown in database when creating a new album.',
 		});
 		throw error;
 	}
