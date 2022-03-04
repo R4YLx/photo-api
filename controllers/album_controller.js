@@ -81,6 +81,41 @@ const addAlbum = async (req, res) => {
 	}
 };
 
+const addPhotoToAlbum = async (req, res) => {
+	// check for any validation errors
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).send({ status: 'fail', data: errors.array() });
+	}
+
+	// get only the validated data from the request
+	const validData = matchedData(req);
+
+	const user = await models.User.fetchById(req.user.user_id, {
+		withRelated: ['photos'],
+	});
+
+	const photos = user.related('photos');
+
+	const photo = photos.find(photo => photo.id == req.params.photoId);
+
+	try {
+		const result = await photo.albums().attach(validData.album_id);
+		debug('Added photo to album successfully: %O', result);
+
+		res.send({
+			status: 'success',
+			data: result,
+		});
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exception thrown in database when adding a photo to an album.',
+		});
+		throw error;
+	}
+};
+
 /**
  * Update a specific album
  */
@@ -131,4 +166,5 @@ module.exports = {
 	showAlbum,
 	addAlbum,
 	updateAlbum,
+	addPhotoToAlbum,
 };

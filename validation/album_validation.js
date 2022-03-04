@@ -1,5 +1,5 @@
 /**
- * Profile Validation Rules
+ * Album Validation Rules
  */
 
 const { body } = require('express-validator');
