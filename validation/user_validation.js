@@ -8,13 +8,15 @@ const models = require('../models');
 const createRules = [
 	body('email')
 		.exists()
-		.isLength({ min: 4 })
+		.isEmail()
+		.normalizeEmail()
+		.isLength({ min: 3 })
 		.custom(async value => {
 			const user = await new models.User({ email: value }).fetch({
 				require: false,
 			});
 			if (user) {
-				return Promise.reject('Email already exists.');
+				return Promise.reject('Email is already in use.');
 			}
 
 			return Promise.resolve();

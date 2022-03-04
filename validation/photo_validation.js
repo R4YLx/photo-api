@@ -1,5 +1,5 @@
 /**
- * Photos Validation Rules
+ * Photo Validation Rules
  */
 
 const { body } = require('express-validator');

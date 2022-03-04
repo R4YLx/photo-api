@@ -14,7 +14,7 @@ const jwt = require('jsonwebtoken');
 const register = async (req, res) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		res.status(422).send({ status: 'fail', data: errors.array() });
+		return res.status(422).send({ status: 'fail', data: errors.array() });
 	}
 	const validData = matchedData(req);
 
@@ -35,7 +35,9 @@ const register = async (req, res) => {
 		res.send({
 			status: 'success',
 			data: {
-				user,
+				email: validData.email,
+				first_name: validData.first_name,
+				last_name: validData.last_name,
 			},
 		});
 	} catch (error) {
