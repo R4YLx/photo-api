@@ -25,7 +25,7 @@ CREATE TABLE albums (
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
-CREATE TABLE album_photos (
+CREATE TABLE albums_photos (
     id INT NOT NULL AUTO_INCREMENT,
     photo_id INTEGER UNSIGNED REFERENCES photos(id),
     album_id INTEGER UNSIGNED REFERENCES albums(id),

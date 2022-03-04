@@ -29,10 +29,8 @@ const showAlbum = async (req, res) => {
 	const user = await models.User.fetchById(req.user.user_id, {
 		withRelated: ['albums'],
 	});
-
-	const albums = user.related('albums');
-
-	const album = albums.find(album => album.id == req.params.albumId);
+	const userAlbums = user.related('albums');
+	const album = userAlbums.find(album => album.id == req.params.albumId);
 
 	if (!album) {
 		return res.status(404).send({
@@ -40,11 +38,13 @@ const showAlbum = async (req, res) => {
 			message: 'Album not found',
 		});
 	}
-
+	const thisAlbum = await models.Album.fetchById(req.params.albumId, {
+		withRelated: ['photos'],
+	});
 	res.send({
 		status: 'success',
 		data: {
-			album: album,
+			album: thisAlbum,
 		},
 	});
 };
