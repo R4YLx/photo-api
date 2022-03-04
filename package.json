@@ -8,16 +8,8 @@
 		"dev": "cross-env DEBUG=photos:* nodemon ./bin/www",
 		"debug": "cross-env DEBUG=photos:* nodemon --inspect ./bin/www"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/R4YLx/photo-api.git"
-	},
 	"author": "",
 	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/R4YLx/photo-api/issues"
-	},
-	"homepage": "https://github.com/R4YLx/photo-api#readme",
 	"dependencies": {
 		"bcrypt": "^5.0.1",
 		"bookshelf": "^1.2.0",
@@ -31,5 +23,8 @@
 		"morgan": "^1.10.0",
 		"mysql": "^2.18.1",
 		"nodemon": "^2.0.15"
+	},
+	"engines": {
+		"node": "16.x"
 	}
 }
