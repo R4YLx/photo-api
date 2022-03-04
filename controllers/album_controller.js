@@ -53,27 +53,6 @@ const showAlbum = async (req, res) => {
  * Store a new album
  */
 const addAlbum = async (req, res) => {
-	/*
-
-	// add the current user's id to the album
-	validData.user_id = req.user.user_id;
-	try {
-		const album = await new models.Album(validData).save();
-		debug('Created new album successfully: %O', album);
-
-		res.send({
-			status: 'success',
-			data: album,
-		});
-	} catch (error) {
-		res.status(500).send({
-			status: 'error',
-			message: 'Exception thrown in database when creating a new album.',
-		});
-		throw error;
-	}
-	*/
-
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {

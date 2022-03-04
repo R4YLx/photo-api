@@ -62,38 +62,21 @@ const addPhoto = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
-	const user = await models.User.fetchById(req.user.user_id, {
-		withRelated: ['photos'],
-	});
-
-	// get the user's photos
-	const photos = user.related('photos');
-
-	// check if photo is already in the user's list of photos
-	const existing_photo = photos.find(photo => photo.id == validData.photo_id);
-
-	// if it already exists, bail
-	if (existing_photo) {
-		return res.send({
-			status: 'fail',
-			data: 'Photo already exists.',
-		});
-	}
+	validData.user_id = req.user.user_id;
 
 	try {
-		const result = await user.photos().attach(validData.photo_id);
-
-		debug('Added photo successfully: %o', res);
+		const photo = await new models.Photo(validData).save();
+		debug('Created new photo successfully: %O', photo);
 		res.send({
 			status: 'success',
 			data: {
-				result: result,
+				result: photo,
 			},
 		});
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown when attempting to add an album.',
+			message: 'Exception thrown when attempting to add an photo.',
 		});
 		throw error;
 	}
