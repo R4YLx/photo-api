@@ -33,7 +33,6 @@ module.exports = bookshelf => {
 			},
 
 			async fetchById(id, fetchOptions = {}) {
-				// fetch user with parameter id
 				return await new this({ id }).fetch(fetchOptions);
 			},
 		}
