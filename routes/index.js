@@ -18,6 +18,8 @@ router.post(
 	authController.register
 );
 
+router.post('/refresh', authController.refresh);
+
 router.post('/login', authController.login);
 
 router.use(auth.validateToken);
