@@ -5,7 +5,10 @@ const userValidationRules = require('../validation/user_validation');
 const authController = require('../controllers/auth_controller');
 
 router.get('/', (req, res, next) => {
-	res.send({ success: true, data: { msg: 'Hi there!' } });
+	res.send({
+		success: true,
+		data: { msg: 'Hi there, This app is upp and running!' },
+	});
 });
 
 // register new user
