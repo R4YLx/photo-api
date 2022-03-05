@@ -1,0 +1,11 @@
+User 1:
+{
+  "email": "user1@email.com",
+  "password": "passwordIsSafe",
+}
+
+User 2:
+{
+  "email": "user2@email.com",
+  "password": "safePassword"
+}
