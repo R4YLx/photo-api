@@ -45,4 +45,4 @@
 
 ## Printscreens
 
-<img src="" width=100%>
+<img src="https://github.com/R4YLx/photo-api/blob/main/assets/scrn.png" width=100%>
