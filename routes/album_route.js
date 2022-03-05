@@ -12,14 +12,18 @@ router.get('/:albumId', albumController.showAlbum);
 /* Store a new album */
 router.post('/', albumValidationRules.createRules, albumController.addAlbum);
 
-/* Store a photo in album */
-router.post('/:albumId/photos', albumController.addPhotoToAlbum);
-
 /* Update a specific album */
 router.put(
 	'/:albumId',
 	albumValidationRules.updateRules,
 	albumController.updateAlbum
+);
+
+/* Store a photo in album */
+router.post(
+	'/:albumId/photos',
+	albumValidationRules.addPhotoToAlbumRules,
+	albumController.addPhotoToAlbum
 );
 
 module.exports = router;

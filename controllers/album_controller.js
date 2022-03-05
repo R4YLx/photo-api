@@ -38,13 +38,13 @@ const showAlbum = async (req, res) => {
 			message: 'Album not found',
 		});
 	}
-	const thisAlbum = await models.Album.fetchById(req.params.albumId, {
+	const albumId = await models.Album.fetchById(req.params.albumId, {
 		withRelated: ['photos'],
 	});
 	res.send({
 		status: 'success',
 		data: {
-			album: thisAlbum,
+			album: albumId,
 		},
 	});
 };
@@ -79,103 +79,6 @@ const addAlbum = async (req, res) => {
 		});
 		throw error;
 	}
-};
-
-const addPhotoToAlbum = async (req, res) => {
-	// check for any validation errors
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).send({ status: 'fail', data: errors.array() });
-	}
-
-	// get only the validated data from the request
-	const validData = matchedData(req);
-
-	const user = await models.User.fetchById(req.user.user_id, {
-		withRelated: ['photos'],
-	});
-
-	const photos = user.related('photos');
-
-	const photo = photos.find(photo => photo.id == req.params.photoId);
-
-	try {
-		const result = await photo.albums().attach(validData.album_id);
-		debug('Added photo to album successfully: %O', result);
-
-		res.send({
-			status: 'success',
-			data: result,
-		});
-	} catch (error) {
-		res.status(500).send({
-			status: 'error',
-			message: 'Exception thrown in database when adding a photo to an album.',
-		});
-		throw error;
-	}
-
-	/*
-		const albumId = req.params.albumId;
-	
-		// Checking after errors before adding photo
-		const errors = validationResult(req);
-		if(!errors.isEmpty()){
-			return res.status(422).send({ status : "fail", data: errors.array() });
-		}
-	
-		const validData = matchedData(req); 
-	
-		// get the user's album by id 
-		const user = await models.User.fetchById(req.user.user_id, { withRelated: ['albums', 'photos'] });
-	
-		// get the user's albums
-		const albums = user.related('albums');
-		const userAlbum = albums.find(album => album.id == albumId)
-	
-		// make sure album exists
-		const album = await models.Album.fetchById(albumId);
-		const photos = album.related('photos');
-	
-		if (!album) {
-			debug("Album to update was not found. %o", { id: albumId });
-			res.status(404).send({
-				status: 'fail',
-				data: 'Album Not Found',
-			});
-			return;
-		}
-		//make sure user has the album in their list
-		if(!userAlbum) {
-			debug("Album to update does not belong to you. %o", { id: albumId });
-			res.status(403).send({
-				status:'fail',
-				data: 'You are not authorized for this action.'
-			});
-			return;
-		}
-		
-		try {
-	
-			const result = await album.photos().attach(validData.photo_id);
-	
-			if(result === photos){
-				debug("Cannot add photo already in list.")
-			}
-			debug("Added photo successfully: %O", res);
-			res.send({
-				status: 'success',
-				data: 
-					result,
-			});
-		} catch (error) {
-			res.status(500).send({
-				status: 'error',
-				message: "Exception thrown when attempting to add photo",
-			});
-			throw error;
-		}
-		*/
 };
 
 /**
@@ -218,6 +121,75 @@ const updateAlbum = async (req, res) => {
 		res.status(500).send({
 			status: 'error',
 			message: 'Exception thrown in database when updating a new album.',
+		});
+		throw error;
+	}
+};
+
+const addPhotoToAlbum = async (req, res) => {
+	const albumId = req.params.albumId;
+	// check for any validation errors
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).send({ status: 'fail', data: errors.array() });
+	}
+
+	// get only the validated data from the request
+	const validData = matchedData(req);
+
+	const user = await models.User.fetchById(req.user.user_id, {
+		withRelated: ['albums'],
+	});
+
+	// find user album
+	const findAlbum = user.related('albums').find(album => album.id == albumId);
+
+	const album = await models.Album.fetchById(albumId, {
+		withRelated: ['photos'],
+	});
+
+	// check if album exists for user to add photo to
+	const existing_photo = album
+		.related('photos')
+		.find(photo => photo.id == validData.photo_id);
+
+	if (!findAlbum) {
+		debug('Album to update does not belong to you. %o', { id: albumId });
+		res.status(403).send({
+			status: 'fail',
+			data: 'You are not authorized for this action.',
+		});
+		return;
+	}
+
+	if (!album) {
+		debug('Album to update was not found. %o', { id: albumId });
+		res.status(404).send({
+			status: 'fail',
+			data: 'Album Not Found',
+		});
+		return;
+	}
+
+	if (existing_photo) {
+		return res.send({
+			status: 'fail',
+			data: 'Photo already exists',
+		});
+	}
+
+	try {
+		const result = await album.photos().attach(validData.photo_id);
+		debug('Added photo to album successfully: %O', result);
+
+		res.send({
+			status: 'success',
+			data: result,
+		});
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exception thrown in database when adding a photo to an album.',
 		});
 		throw error;
 	}
