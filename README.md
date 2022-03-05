@@ -11,6 +11,7 @@
 
 - [Assignment](#assignment)
 - [Tools](#tools)
+- [Printscreen](#printscreen)
 
 ## Assignment
 
@@ -33,7 +34,7 @@
 - All passwords must be salted and hashed.
 - All received data must be sanitized and validated.
 - All endpoints for photos and albums must require authentication.
-- HTTP Basic Authentication must be used.
+- HTTP Basic Authentication must be used or more advanced such as JWT.
 
 #### Time limit
 
@@ -43,6 +44,6 @@
 
 - VS Code
 
-## Printscreens
+## Printscreen
 
 <img src="https://github.com/R4YLx/photo-api/blob/main/assets/scrn.png" width=100%>
