@@ -87,10 +87,9 @@ const addAlbum = async (req, res) => {
 const updateAlbum = async (req, res) => {
 	const albumId = req.params.albumId;
 
-	// make sure album exists
-	const album = await new models.Album({ id: albumId }).fetch({
-		require: false,
-	});
+	// get album by id
+	const album = await models.Album.fetchById(req.params.albumId);
+
 	if (!album) {
 		debug('Album to update was not found. %o', { id: albumId });
 		res.status(404).send({
@@ -126,7 +125,7 @@ const updateAlbum = async (req, res) => {
 	}
 };
 
-const addPhotoToAlbum = async (req, res) => {
+const addPhoto = async (req, res) => {
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -174,5 +173,5 @@ module.exports = {
 	showAlbum,
 	addAlbum,
 	updateAlbum,
-	addPhotoToAlbum,
+	addPhoto,
 };

@@ -30,9 +30,10 @@ const showPhoto = async (req, res) => {
 	const user = await models.User.fetchById(req.user.user_id, {
 		withRelated: ['photos'],
 	});
-	const photos = user.related('photos');
 
-	const photo = photos.find(photo => photo.id == req.params.photoId);
+	const photo = user
+		.related('photos')
+		.find(photo => photo.id == req.params.photoId);
 
 	if (!photo) {
 		return res.status(404).send({
@@ -86,19 +87,36 @@ const addPhoto = async (req, res) => {
  * Update a specific photo
  */
 const updatePhoto = async (req, res) => {
-	const photoId = req.params.photoId;
+	const user = await models.User.fetchById(req.user.user_id, {
+		withRelated: ['photos'],
+	});
 
 	// make sure photo exists
-	const photo = await new models.Photo({ id: photoId }).fetch({
-		require: false,
-	});
+	const photo = await models.Photo.fetchById(req.params.photoId);
+
+	const userPhoto = user
+		.related('photos')
+		.find(photo => photo.id == req.params.photoId);
+
+	// make sure photo exists
 	if (!photo) {
-		debug('Photo to update was not found. %o', { id: photoId });
+		debug('Photo to update was not found. %o', { id: req.params.photoId });
 		res.status(404).send({
 			status: 'fail',
 			data: 'Photo Not Found',
 		});
 		return;
+	}
+
+	// deny if photo doesn't belong to user
+	if (!userPhoto) {
+		debug('Cannot update due to photo belongs to another user. %o', {
+			id: req.params.photoId,
+		});
+		return res.status(403).send({
+			status: 'fail',
+			data: 'Action denied',
+		});
 	}
 
 	// check for any validation errors

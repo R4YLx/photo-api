@@ -8,7 +8,7 @@ const createRules = [body('title').exists().isLength({ min: 4 })];
 
 const updateRules = [body('title').optional().isLength({ min: 4 })];
 
-const addPhotoToAlbumRules = [
+const addPhotoRules = [
 	body('photo_id')
 		.exists()
 		.isInt()
@@ -27,5 +27,5 @@ const addPhotoToAlbumRules = [
 module.exports = {
 	createRules,
 	updateRules,
-	addPhotoToAlbumRules,
+	addPhotoRules,
 };

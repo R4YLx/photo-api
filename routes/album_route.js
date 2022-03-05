@@ -22,8 +22,8 @@ router.put(
 /* Store a photo in album */
 router.post(
 	'/:albumId/photos',
-	albumValidationRules.addPhotoToAlbumRules,
-	albumController.addPhotoToAlbum
+	albumValidationRules.addPhotoRules,
+	albumController.addPhoto
 );
 
 module.exports = router;
