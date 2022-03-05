@@ -8,7 +8,7 @@ const createRules = [body('title').exists().isLength({ min: 4 })];
 
 const updateRules = [body('title').optional().isLength({ min: 4 })];
 
-addPhotoToAlbumRules = [
+const addPhotoToAlbumRules = [
 	body('photo_id')
 		.exists()
 		.isInt()

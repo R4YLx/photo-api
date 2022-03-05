@@ -127,7 +127,6 @@ const updateAlbum = async (req, res) => {
 };
 
 const addPhotoToAlbum = async (req, res) => {
-	const albumId = req.params.albumId;
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -137,14 +136,7 @@ const addPhotoToAlbum = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
-	const user = await models.User.fetchById(req.user.user_id, {
-		withRelated: ['albums'],
-	});
-
-	// find user album
-	const findAlbum = user.related('albums').find(album => album.id == albumId);
-
-	const album = await models.Album.fetchById(albumId, {
+	const album = await models.Album.fetchById(req.params.albumId, {
 		withRelated: ['photos'],
 	});
 
@@ -152,24 +144,6 @@ const addPhotoToAlbum = async (req, res) => {
 	const existing_photo = album
 		.related('photos')
 		.find(photo => photo.id == validData.photo_id);
-
-	if (!findAlbum) {
-		debug('Album to update does not belong to you. %o', { id: albumId });
-		res.status(403).send({
-			status: 'fail',
-			data: 'You are not authorized for this action.',
-		});
-		return;
-	}
-
-	if (!album) {
-		debug('Album to update was not found. %o', { id: albumId });
-		res.status(404).send({
-			status: 'fail',
-			data: 'Album Not Found',
-		});
-		return;
-	}
 
 	if (existing_photo) {
 		return res.send({
@@ -184,7 +158,7 @@ const addPhotoToAlbum = async (req, res) => {
 
 		res.send({
 			status: 'success',
-			data: result,
+			data: null,
 		});
 	} catch (error) {
 		res.status(500).send({
