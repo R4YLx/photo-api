@@ -7,7 +7,7 @@ const authController = require('../controllers/auth_controller');
 router.get('/', (req, res, next) => {
 	res.send({
 		success: true,
-		data: { msg: 'Hi there, this app is upp and running!' },
+		data: { msg: 'Hi there, this app is up and running!' },
 	});
 });
 
