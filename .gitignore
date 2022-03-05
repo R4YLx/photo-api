@@ -1,5 +1,4 @@
 /**/node_modules/
 *-nogit
 /**/*.env
-
-.sqlphotos.sql
+photos.sql
