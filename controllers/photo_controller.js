@@ -115,7 +115,7 @@ const updatePhoto = async (req, res) => {
 		});
 		return res.status(403).send({
 			status: 'fail',
-			data: 'Action denied',
+			data: 'Action denied. Try something that belongs to you!',
 		});
 	}
 

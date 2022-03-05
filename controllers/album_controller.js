@@ -85,18 +85,35 @@ const addAlbum = async (req, res) => {
  * Update a specific album
  */
 const updateAlbum = async (req, res) => {
-	const albumId = req.params.albumId;
-
+	const user = await models.User.fetchById(req.user.user_id, {
+		withRelated: ['albums'],
+	});
 	// get album by id
 	const album = await models.Album.fetchById(req.params.albumId);
 
+	const userAlbum = user
+		.related('albums')
+		.find(album => album.id == req.params.albumId);
+
+	// make sure album exists
 	if (!album) {
-		debug('Album to update was not found. %o', { id: albumId });
+		debug('Album to update was not found. %o', { id: req.params.albumId });
 		res.status(404).send({
 			status: 'fail',
 			data: 'Album Not Found',
 		});
 		return;
+	}
+
+	// deny if album doesn't belong to user
+	if (!userAlbum) {
+		debug('Cannot update due to album belongs to another user. %o', {
+			id: req.params.albumId,
+		});
+		return res.status(403).send({
+			status: 'fail',
+			data: 'Action denied. Try something that belongs to you!',
+		});
 	}
 
 	// check for any validation errors
