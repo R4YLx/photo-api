@@ -153,12 +153,16 @@ const addPhoto = async (req, res) => {
 	const validData = matchedData(req);
 
 	const user = await models.User.fetchById(req.user.user_id, {
-		withRelated: ['albums'],
+		withRelated: ['albums', 'photos'],
 	});
 
 	const userAlbum = user
 		.related('albums')
 		.find(album => album.id == req.params.albumId);
+
+	const userPhoto = user
+		.related('photos')
+		.find(photo => photo.id == validData.photo_id);
 
 	const album = await models.Album.fetchById(req.params.albumId, {
 		withRelated: ['photos'],
@@ -188,13 +192,13 @@ const addPhoto = async (req, res) => {
 	}
 
 	// Deny if album belongs to other user
-	if (!userAlbum) {
+	if (!userAlbum || !userPhoto) {
 		debug('Cannot add photo to album you do not own. %o', {
 			id: req.params.albumId,
 		});
 		res.status(403).send({
 			status: 'fail',
-			data: 'Action denied. Album does not belongs to you!',
+			data: 'Action denied. This does not belongs to you!',
 		});
 		return;
 	}
