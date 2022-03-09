@@ -19,4 +19,7 @@ router.put(
 	photoController.updatePhoto
 );
 
+/* Delete a specific photo */
+router.delete('/:photoId', photoController.deletePhoto);
+
 module.exports = router;

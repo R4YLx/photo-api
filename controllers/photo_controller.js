@@ -145,9 +145,69 @@ const updatePhoto = async (req, res) => {
 	}
 };
 
+const deletePhoto = async (req, res) => {
+	const user = await models.User.fetchById(req.user.user_id, {
+		withRelated: ['photos'],
+	});
+
+	// make sure photo exists
+	const photo = await models.Photo.fetchById(req.params.photoId);
+
+	const userPhoto = user
+		.related('photos')
+		.find(photo => photo.id == req.params.photoId);
+
+	// make sure photo exists
+	if (!photo) {
+		debug('Photo to delete was not found. %o', { id: req.params.photoId });
+		res.status(404).send({
+			status: 'fail',
+			data: 'Photo Not Found',
+		});
+		return;
+	}
+
+	// deny if photo doesn't belong to user
+	if (!userPhoto) {
+		debug('Cannot delete due to photo belongs to another user. %o', {
+			id: req.params.photoId,
+		});
+		return res.status(403).send({
+			status: 'fail',
+			data: 'Action denied. Try something that belongs to you!',
+		});
+	}
+
+	// check for any validation errors
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).send({ status: 'fail', data: errors.array() });
+	}
+
+	// get only the validated data from the request
+	const validData = matchedData(req);
+
+	try {
+		const deletedPhoto = await photo.destroy(validData);
+		debug('Deleted photo successfully: %O', deletedPhoto);
+
+		res.send({
+			status: 'success',
+			data: null,
+		});
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exception thrown in database when deleting a photo.',
+		});
+		throw error;
+	}
+};
+
 module.exports = {
 	getPhotos,
 	showPhoto,
 	addPhoto,
 	updatePhoto,
+	deletePhoto,
 };

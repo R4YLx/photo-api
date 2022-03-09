@@ -26,4 +26,7 @@ router.post(
 	albumController.addPhoto
 );
 
+/* Delete a specific album */
+router.delete('/:albumId', albumController.deleteAlbum);
+
 module.exports = router;
