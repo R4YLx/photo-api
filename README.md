@@ -1,6 +1,6 @@
 # photo-api
 
-[photo REST API](https://ray-photo-api.herokuapp.com/)
+Try out my [photo REST API](https://ray-photo-api.herokuapp.com/)
 
 ### Languages used:
 
@@ -20,7 +20,7 @@
 
 #### Basic requirement
 
-- Registrate a new user.
+- Register a new user.
 - List user photos and album.
 - Create/add new photo and album.
 - Update photo an album.
